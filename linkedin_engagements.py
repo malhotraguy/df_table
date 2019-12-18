@@ -2,17 +2,16 @@ import os
 import sys
 from datetime import datetime
 
-from linkedin_api import Linkedin
-
+from constants import EXIT, CLEAR, DONE
 from get_posts import get_updates, get_post_link_and_social_activity
-from linkedin_tool_helpers import get_company_name, get_key
+from linkedin_tool_helpers import get_company_name, get_linkedin_object
 
 
-def get_engagements(linkedin_object, company, total_likes=0, total_posts=0):
+def get_engagements(linkedin, company, total_likes=0, total_posts=0):
     company_universal_name = get_company_name(company)
     print(f"Looking engagements for : {company_universal_name}")
     company_updates = get_updates(
-        linkedin_object=linkedin_object, company_name=company_universal_name
+        linkedin_object=linkedin, company_name=company_universal_name
     )
     if company_updates:
         for post in company_updates:
@@ -25,37 +24,35 @@ def get_engagements(linkedin_object, company, total_likes=0, total_posts=0):
         return None, None
 
 
-def compare_engagements(linkedin_object, companies=[]):
+def compare_engagements(linkedin, companies=[]):
     response = input(
         "Enter the company urn or linkedin url or type done to start comparing or type exit: "
     ).strip()
-    if response.lower() == "exit":
+    if response.lower() == EXIT:
         sys.exit("Quiting the Tool!!")
-    elif response.lower() == "done":
-        os.system("clear")
+    elif response.lower() == DONE:
+        os.system(CLEAR)
         print(f"Selected comapnies: {companies}")
         print("=" * 130)
         for company in companies:
             start_time = datetime.now()
-            total_posts, total_likes = get_engagements(linkedin_object, company)
+            total_posts, total_likes = get_engagements(linkedin, company)
             print(f"Total Posts= {total_posts}, Total Likes= {total_likes}")
             print(f"Time taken to fetch the result= {datetime.now() - start_time}")
             print("=" * 130)
-        return compare_engagements(linkedin_object, companies=[])
+        return compare_engagements(linkedin, companies=[])
     elif len(response) == 0:
-        os.system("clear")
+        os.system(CLEAR)
         print(f"Selected comapnies: {companies}")
         print("Response cant be empty!.Try again", file=sys.stderr)
-        return compare_engagements(linkedin_object, companies=companies)
+        return compare_engagements(linkedin, companies=companies)
     else:
         companies.append(response)
-        os.system("clear")
+        os.system(CLEAR)
         print(f"Selected comapnies: {companies}")
-        return compare_engagements(linkedin_object, companies=companies)
+        return compare_engagements(linkedin, companies=companies)
 
 
 if __name__ == "__main__":
-    username, password = get_key()
-    # Authenticate using any Linkedin account credentials
-    linkedin_object = Linkedin(username=username, password=password)
+    linkedin_object = get_linkedin_object()
     compare_engagements(linkedin_object)

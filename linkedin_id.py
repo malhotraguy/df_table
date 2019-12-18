@@ -1,8 +1,7 @@
 import sys
 from datetime import datetime
-import pandas as pd
 
-from linkedin_api import Linkedin
+import pandas as pd
 
 from constants import (
     COLORSTART,
@@ -14,9 +13,8 @@ from constants import (
     HEADQUARTER,
     URL,
     CITY,
-)
-from linkedin_tool_helpers import get_key, get_company_name
-from linkedin_engagements import get_engagements
+    EXIT)
+from linkedin_tool_helpers import get_company_name, get_linkedin_object
 
 
 def get_urn_and_url(company_detail):
@@ -29,7 +27,7 @@ def get_urn_and_url(company_detail):
 
 
 def get_linkedin_id(company_name, linkedin_object):
-    if company_name == "exit":
+    if company_name == EXIT:
         sys.exit("Quiting the Tool!!")
 
     try:
@@ -59,10 +57,6 @@ def get_linkedin_id(company_name, linkedin_object):
             print(f"Universal Name= {company_urn}")
             print(f"URN ID= {urn_id}")
             print(f"Linkedin url= {linkedin_url}")
-            # total_posts, total_likes = get_engagements(
-            #     linkedin_object=linkedin_object, company=company_urn
-            # )
-            # print(f"Total Posts= {total_posts}, Total Likes= {total_likes}")
     print("=" * 160)
     print(COLORSTART)
     print("Original Result:-")
@@ -88,12 +82,10 @@ def get_linkedin_id(company_name, linkedin_object):
 
 def linkedin_setup():
     start_time = datetime.now()
-    username, password = get_key()
-    # Authenticate using any Linkedin account credentials
-    linkedin = Linkedin(username=username, password=password)
+    linkedin_object = get_linkedin_object()
     user_input = input("Enter the name of company or type 'exit' to exit: ").strip()
     company_universal_name = get_company_name(user_input)
-    get_linkedin_id(company_universal_name, linkedin_object=linkedin)
+    get_linkedin_id(company_universal_name, linkedin_object=linkedin_object)
     print(f"Total Time={datetime.now() - start_time}")
     print("=" * 160)
     return linkedin_setup()

@@ -4,7 +4,6 @@ from datetime import datetime
 from pprint import pprint
 
 import requests
-from linkedin_api import Linkedin  # https://github.com/tomquirk/linkedin-api
 from requests.exceptions import SSLError
 from urllib3.exceptions import MaxRetryError
 
@@ -36,8 +35,8 @@ from constants import (
     TYPE,
     LINKID,
     UTM,
-)
-from linkedin_tool_helpers import get_key, get_company_name
+    EXIT)
+from linkedin_tool_helpers import get_company_name, get_linkedin_object
 
 
 def refine_url(url):
@@ -73,10 +72,9 @@ def url_from_string(string):
         string,
     )
     resolved_urls_list = [resolve_url(url) for url in urls]
-    if resolved_urls_list:
-        return resolved_urls_list
-    else:
+    if not resolved_urls_list:
         return None
+    return resolved_urls_list
 
 
 def get_article_url(item):
@@ -204,19 +202,17 @@ def get_updates(linkedin_object, company_name):
 
 def linkedin_posts_setup():
     start_time = datetime.now()
-    # Authenticate using any Linkedin account credentials
-    username, password = get_key()
-    linkedin = Linkedin(username, password)
+    linkedin_object = get_linkedin_object()
     print("=" * 160)
     user_input = input(
         "Enter the company universal name or urn id or linkedin profile url or type exit: "
     ).strip()
-    if user_input == "exit":
+    if user_input == EXIT:
         sys.exit("Quiting the Tool!!")
     company_universal_name = get_company_name(user_input)
     print("Looking for posts: ....")
     company_updates = get_updates(
-        linkedin_object=linkedin, company_name=company_universal_name
+        linkedin_object=linkedin_object, company_name=company_universal_name
     )
     if company_updates:
         print("Fetched the posts and now printing them :")

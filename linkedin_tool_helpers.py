@@ -1,6 +1,8 @@
 import json
 import os
 
+from linkedin_api import Linkedin  # https://github.com/tomquirk/linkedin-api
+
 from constants import COMPANY_URL_INITIAL
 
 
@@ -18,3 +20,10 @@ def get_company_name(input_string):
         name = name[1].replace("/", "")
         return name
     return input_string
+
+
+def get_linkedin_object():
+    username, password = get_key()
+    # Authenticate using any Linkedin account credentials
+    linkedin_object = Linkedin(username=username, password=password)
+    return linkedin_object

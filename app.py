@@ -1,19 +1,15 @@
 from datetime import datetime
 
-from flask import Flask, request, render_template, session, redirect, abort
-from flask_login import login_required, current_user
 import pandas as pd
-from linkedin_api import Linkedin
+from flask import Flask, request, render_template, abort
 
 from get_posts import get_updates, get_post_link_and_social_activity, get_url
 from linkedin_engagements import get_engagements
 from linkedin_id import get_linkedin_id
-from linkedin_tool_helpers import get_key, get_company_name
+from linkedin_tool_helpers import get_company_name, get_linkedin_object
 
 app = Flask(__name__)
-username, password = get_key()
-# Authenticate using any Linkedin account credentials
-linkedin_object = Linkedin(username=username, password=password)
+linkedin_object = get_linkedin_object()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -117,4 +113,4 @@ def compare_engagements():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
